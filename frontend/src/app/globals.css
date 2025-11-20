@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-dark text-slate-200 antialiased;
+  }
+
+  * {
+    @apply box-border;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .card {
+    @apply bg-navy-800 border border-slate-600/30 rounded-card shadow-card;
+  }
+
+  .card-hover {
+    @apply transition-shadow duration-300 hover:shadow-card-hover;
+  }
+
+  .input-base {
+    @apply w-full px-4 py-3 bg-navy-700 border border-slate-600/50 rounded-input text-slate-200
+           placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald/50
+           focus:border-emerald transition-colors;
+  }
+
+  .btn-primary {
+    @apply w-full px-6 py-3 bg-emerald text-white font-medium rounded-input
+           hover:bg-emerald-dark transition-colors duration-200
+           focus:outline-none focus:ring-2 focus:ring-emerald/50 focus:ring-offset-2
+           focus:ring-offset-navy-800 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .stat-card {
+    @apply bg-navy-700/50 border border-slate-600/30 rounded-lg p-4;
+  }
+}
