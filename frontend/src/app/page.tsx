@@ -6,23 +6,40 @@ import PageContainer from "@/components/PageContainer";
 import DropdownSelect from "@/components/DropdownSelect";
 import PrimaryButton from "@/components/PrimaryButton";
 import { COUNTRIES, DISEASES } from "@/lib/sampleData";
+import { analyzeDisease } from "@/lib/api";
 
 export default function Home() {
   const router = useRouter();
   const [country, setCountry] = useState("");
   const [disease, setDisease] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleAnalyze = async () => {
     if (!country || !disease) return;
 
     setLoading(true);
+    setError("");
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      // Call real backend API with live OWID data
+      const result = await analyzeDisease({
+        country,
+        disease,
+        data_source: "owid", // Uses real-time data from Our World in Data
+      });
 
-    // Navigate to results page with query params
-    router.push(`/results?country=${country}&disease=${disease}`);
+      // Store result for results page
+      sessionStorage.setItem("analysisResult", JSON.stringify(result));
+
+      // Navigate to results
+      router.push(`/results?country=${country}&disease=${disease}`);
+    } catch (err) {
+      console.error("Analysis failed:", err);
+      setError("Analysis failed. Make sure the backend is running on port 8000.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,6 +89,13 @@ export default function Home() {
           >
             {loading ? "Analyzing..." : "Analyze"}
           </PrimaryButton>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 p-4 bg-danger/10 border border-danger/30 rounded-lg">
+              <p className="text-danger text-sm">{error}</p>
+            </div>
+          )}
         </div>
       </div>
     </PageContainer>

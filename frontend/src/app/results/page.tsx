@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState, useEffect } from "react";
 import PageContainer from "@/components/PageContainer";
 import CaseTrendChart from "@/components/CaseTrendChart";
 import SummaryStatBlock from "@/components/SummaryStatBlock";
@@ -19,8 +19,30 @@ function ResultsContent() {
   const country = searchParams.get("country") || "Canada";
   const disease = searchParams.get("disease") || "Tuberculosis";
 
-  // In production, this would fetch from your API
-  const data = SAMPLE_ANALYSIS;
+  const [data, setData] = useState<typeof SAMPLE_ANALYSIS | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Get from sessionStorage (set on home page after API call)
+    const storedResult = sessionStorage.getItem("analysisResult");
+    if (storedResult) {
+      setData(JSON.parse(storedResult));
+    } else {
+      // Fallback to sample data if no API call was made
+      setData(SAMPLE_ANALYSIS);
+    }
+    setLoading(false);
+  }, []);
+
+  if (loading || !data) {
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-slate-400">Loading results...</div>
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>
